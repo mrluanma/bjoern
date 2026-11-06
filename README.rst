@@ -5,18 +5,16 @@ bjoern: Fast And Ultra-Lightweight HTTP/1.1 WSGI Server
    :alt: Join the chat at https://gitter.im/jonashaag/bjoern
    :target: https://gitter.im/jonashaag/bjoern?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 
-A screamingly fast, ultra-lightweight WSGI_ server for CPython 2 and CPython 3,
-written in C using Marc Lehmann's high performance libev_ event loop and
-Ryan Dahl's http-parser_.
+A screamingly fast, ultra-lightweight WSGI_ server for CPython 3.11+,
+written in pure Python on top of the standard library's ``selectors``
+module. No C extensions, no external dependencies.
 
 Why It's Cool
 ~~~~~~~~~~~~~
 bjoern is the *fastest*, *smallest* and *most lightweight* WSGI server out there,
 featuring
 
-* ~ 1000 lines of C code
-* Memory footprint ~ 600KB
-* Python 2 and Python 3 support (thanks @yanghao!)
+* Pure Python, zero dependencies
 * Single-threaded and without coroutines or other crap
 * Can bind to TCP `host:port` addresses and Unix sockets (thanks @k3d3!)
 * Full persistent connection ("*keep-alive*") support in both HTTP/1.0 and 1.1,
@@ -24,7 +22,7 @@ featuring
 
 Installation
 ~~~~~~~~~~~~
-``pip install bjoern``. See `wiki <https://github.com/jonashaag/bjoern/wiki/Installation>`_ for details.
+``pip install bjoern``. Requires Python 3.11+.
 
 Usage
 ~~~~~
@@ -65,19 +63,12 @@ Advanced usage
    # Bind to abstract Unix socket: (Linux only)
    bjoern.run(wsgi_application, 'unix:@socket_name')
 
-   # Enable statsd metrics. See instrumentation.md for details.
-   bjoern.run(wsgi_application, host, port, statsd=...)
-
 Alternatively, the mainloop can be run separately:
 
 .. code-block:: python
 
    bjoern.listen(wsgi_application, host, port)
    bjoern.run()
-
-   # With metrics. See instrumentation.md for details.
-   bjoern.listen(wsgi_application, host, port)
-   bjoern.run(statsd=...)
 
 You can also simply pass a Python socket(-like) object. Note that you are responsible
 for initializing and cleaning up the socket in that case.
@@ -87,9 +78,4 @@ for initializing and cleaning up the socket in that case.
    bjoern.server_run(socket_object, wsgi_application)
    bjoern.server_run(filedescriptor_as_integer, wsgi_application)
 
-   # This needs manual compilation with `WANT_STATSD=yes`
-   bjoern.server_run(socket_object, wsgi_application, enable_statsd=True)
-
 .. _WSGI:         http://www.python.org/dev/peps/pep-0333/
-.. _libev:        http://software.schmorp.de/pkg/libev.html
-.. _http-parser:  https://github.com/joyent/http-parser

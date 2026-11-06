@@ -1,3 +1,2 @@
-include http-parser/http_parser.[ch]
-include bjoern/*
+include bjoern/*.py
 include LICENSE

@@ -1,10 +1,19 @@
 import os
 import socket
-import _bjoern
 
+from ._server import server_run
+from ._wsgi import FileWrapper
+
+features = {
+    'has_signal_handling': True,
+    'has_sigint_handling': True,
+}
+version = (4, 0, 0)
+__version__ = '4.0.0'
 
 _default_instance = None
 DEFAULT_LISTEN_BACKLOG = 1024
+
 
 def bind_and_listen(host, port=None, reuse_port=False,
                     listen_backlog=DEFAULT_LISTEN_BACKLOG):
@@ -34,18 +43,6 @@ def bind_and_listen(host, port=None, reuse_port=False,
     sock.listen(listen_backlog)
 
     return sock
-
-
-def server_run(sock, wsgi_app, statsd=None):
-    args = [sock, wsgi_app]
-
-    if _bjoern.features.get('has_statsd'):
-        if statsd:
-            args.extend([int(statsd['enable']), statsd['host'], statsd['port'], statsd['ns'], statsd.get('tags')])
-        else:
-            args.extend([0, None, 0, None, None])
-
-    _bjoern.server_run(*args)
 
 
 def listen(wsgi_app, host, port=None, reuse_port=False,
@@ -78,8 +75,6 @@ def run(*args, **kwargs):
     """
     global _default_instance
 
-    statsd = kwargs.pop('statsd', None)
-
     if args or kwargs:
         # Called as `bjoern.run(wsgi_app, host, ...)`
         listen(*args, **kwargs)
@@ -92,7 +87,7 @@ def run(*args, **kwargs):
 
     sock, wsgi_app = _default_instance
     try:
-        server_run(sock, wsgi_app, statsd)
+        server_run(sock, wsgi_app)
     finally:
         if sock.family == socket.AF_UNIX:
             filename = sock.getsockname()

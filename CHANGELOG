@@ -1,3 +1,17 @@
+4.0.0 (unreleased)
+------------------
+* Rewritten in pure Python (no more libev/http-parser C extension);
+  requires Python 3.11+.
+* Dropped statsd support.
+* Bug fixes and improvements:
+  - Duplicate request headers are now joined with "," (previously
+    concatenated with no separator).
+  - "Expect" request-header and "Content-Length" response-header matching
+    is now exact (previously prefix-based).
+  - QUERY_STRING is now always set (empty string when there is no query).
+  - HTTP pipelining is now supported (multiple requests may be sent
+    back-to-back on one connection).
+
 3.2.2 (Sep 11, 2022)
     - #228, 235 Fix libev paths (Ian Swanson, Nicolas Damgaard Larsen)
     - #234 Set ``wsgi.input_terminated`` (Nathan Hoad)

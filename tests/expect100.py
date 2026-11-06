@@ -86,7 +86,7 @@ if __name__ == "__main__":
     sock = bjoern.listen(app, host, port, reuse_port=True)
 
     t = threading.Thread(target=bjoern.server_run, args=[sock, app])
-    t.setDaemon(True)
+    t.daemon = True
     t.start()
 
     reports = []

@@ -35,6 +35,6 @@ while 1:
     if not data: break
     print(repr(data))
     if data.endswith(b'0\r\n\r\n'):
-        if raw_input('new request? Y/n') == 'n':
+        if input('new request? Y/n') == 'n':
             exit()
         conn.send(b'GET / HTTP/1.1\r\nConnection: Keep-Alive\r\n\r\n')
